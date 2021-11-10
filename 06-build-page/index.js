@@ -11,8 +11,9 @@ const inputPathCSS = path.resolve(__dirname, 'styles');
 const outputPathCSS = path.resolve(__dirname, 'project-dist');
 
 const inputPathHTML = path.resolve(__dirname, 'components');
-const outputPathHTML = path.resolve(__dirname, 'project-dist');
-
+// const outputPathHTML = path.resolve(__dirname, 'project-dist');
+let inputHTML = path.resolve(__dirname, 'template.html');
+let outputHTML = path.resolve(__dirname, 'project-dist', 'index.html');
 
 
 // копируем assets
@@ -45,8 +46,8 @@ async function copyDirectory(folder) {
 // fs.copyFile(path.resolve(__dirname, 'template.html'), path.resolve(outputPathHTML, 'index.html'), (error) => {
 //     if (error) console.log('Error:', error); });
 
-
-
+// let outputHTML = path.resolve(__dirname, 'project-dist', 'index.html');
+// let dataHTML = fsProm.readFile(outputHTML, 'utf-8');
     
 // создаем CSS
 
@@ -67,13 +68,32 @@ async function copyDirectory(folder) {
 
 // создаем HTML
 
-let outputHTML = path.resolve(__dirname, 'project-dist', 'index.html');
-let dataHTML = fsProm.readFile(outputHTML, 'utf-8');
+async function createHtml() {
+  
+  let dataHTML = await fsProm.readFile(inputHTML, {encoding: 'utf-8'}); 
+  const nodesHTML = await fsProm.readdir(inputPathHTML, { withFileTypes: true });
 
-// async function creatHTML() {
+  for (const node of nodesHTML) {
+
+    const nodePath = path.join(inputPathHTML, node.name);
+
+    if (node.isFile() && path.extname(nodePath) === '.html') {
+      const nodeContent = await fsProm.readFile(nodePath, {encoding: 'utf-8'});
+      const nodeName = node.name.replace('.html', '')
+
+      dataHTML = dataHTML.replace(`{{${nodeName}}}`, nodeContent);
+    };
+  };
+
+  await fsProm.writeFile(outputHTML, dataHTML);
+}
+
+createHtml()
+
+
+// async function createHtml() {
    
-
-//  fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
+//  await fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
 //     if(error) {
 //         console.log('Error:', error);}
 //     else {
@@ -81,53 +101,55 @@ let dataHTML = fsProm.readFile(outputHTML, 'utf-8');
 //         if (file.isFile() && file.name.split('.')[1] === 'html') {
 //             bundelHTML.push(fsProm.readFile(path.resolve(inputPathHTML, file.name)));
 //             Promise.all(bundelHTML).then (value => {
+               // console.log( dataHTML)
+//               // console.log(value)
+
+//             //  dataHTML = dataHTML.replace(`{{${file.name.split('.')[0]}}}`, value);
+              
+//             //  fsProm.writeFile(outputHTML);
+//             fsProm.writeFile((path.resolve(outputPathHTML, 'index.html')), value);
+//           });
+//         }
+//       });
+//     }
+//   });
+
+// }
+
+// createHtml()
+
+// function add (file, value){
+//   dataHTML = dataHTML.replace(`{{${file.name.split('.')[0]}}}`, value);
+// }
+
+// async function createHtml() {
+
+
+// fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
+//     if(error) {
+//         console.log('Error:', error);}
+//     else {
+//       files.forEach(file => {
+//         if (file.isFile() && file.name.split('.')[1] === 'html') {
+//             bundelHTML.push(fsProm.readFile(path.resolve(inputPathHTML, file.name)));
+//             Promise.all(bundelHTML).then(value => {
               
 //               console.log( dataHTML)
-//               console.log(value )
+//               add(value)
 
-//              dataHTML =  value;
+//             // dataHTML = dataHTML.replace(`{{${file.name.split('.')[0]}}}`, value);
               
               
-             
-//             //  
+//               console.log(value)
+//               // fsProm.writeFile(outputHTML);
 //             // fsProm.writeFile((path.resolve(outputPathHTML, 'index.html')), value);
 //           });
 //         }
 //       });
 //     }
 //   });
-// fsProm.writeFile(outputHTML);
 // }
-
-// creatHTML()
-
-
-
-fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
-    if(error) {
-        console.log('Error:', error);}
-    else {
-      files.forEach(file => {
-        if (file.isFile() && file.name.split('.')[1] === 'html') {
-            bundelHTML.push(fsProm.readFile(path.resolve(inputPathHTML, file.name)));
-            Promise.all(bundelHTML).then(value => {
-              
-              console.log( dataHTML)
-
-            // dataHTML = dataHTML.replace(`{{${file.name.split('.')[0]}}}`, value);
-              
-              
-              console.log(value)
-              // fsProm.writeFile(outputHTML);
-            fsProm.writeFile((path.resolve(outputPathHTML, 'index.html')), value);
-          });
-        }
-      });
-    }
-  });
-
-
-
+//   createHtml()
 
 
 // После завершения работы скрипта должна быть создана папка project-dist
