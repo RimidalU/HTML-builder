@@ -21,8 +21,7 @@ fs.readdir(inputPath, (error, folders) => {
     if(error) {
         console.log('Error', error.message)}
     else {
-        folders.forEach(folder => {
-            console.log(folder)
+        folders.forEach(folder => {            
             copyDirectory(folder)
       })}})
 
@@ -40,6 +39,14 @@ async function copyDirectory(folder) {
     }})
 }
 
+// fs.copyFile(path.resolve(__dirname, 'template.html'), path.resolve(outputPathHTML, 'index.html'), (error) => {
+//   if (error) console.log('Error:', error); })
+
+// fs.copyFile(path.resolve(__dirname, 'template.html'), path.resolve(outputPathHTML, 'index.html'), (error) => {
+//     if (error) console.log('Error:', error); });
+
+
+
     
 // создаем CSS
 
@@ -51,7 +58,7 @@ async function copyDirectory(folder) {
         if (file.isFile() && file.name.split('.')[1] === 'css') {
             bundel.push(fsProm.readFile(path.resolve(inputPathCSS, file.name)));
             Promise.all(bundel).then(value => {
-            fsProm.writeFile(path.resolve(outputPathCSS, 'bundle.css'), value.join('\n'));
+            fsProm.writeFile(path.resolve(outputPathCSS, 'style.css'), value.join('\n'));
           });
         }
       });
@@ -59,6 +66,41 @@ async function copyDirectory(folder) {
   });
 
 // создаем HTML
+
+let outputHTML = path.resolve(__dirname, 'project-dist', 'index.html');
+let dataHTML = fsProm.readFile(outputHTML, 'utf-8');
+
+// async function creatHTML() {
+   
+
+//  fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
+//     if(error) {
+//         console.log('Error:', error);}
+//     else {
+//       files.forEach(file => {
+//         if (file.isFile() && file.name.split('.')[1] === 'html') {
+//             bundelHTML.push(fsProm.readFile(path.resolve(inputPathHTML, file.name)));
+//             Promise.all(bundelHTML).then (value => {
+              
+//               console.log( dataHTML)
+//               console.log(value )
+
+//              dataHTML =  value;
+              
+              
+             
+//             //  
+//             // fsProm.writeFile((path.resolve(outputPathHTML, 'index.html')), value);
+//           });
+//         }
+//       });
+//     }
+//   });
+// fsProm.writeFile(outputHTML);
+// }
+
+// creatHTML()
+
 
 
 fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
@@ -69,8 +111,15 @@ fs.readdir(inputPathHTML, {withFileTypes: true}, (error, files) => {
         if (file.isFile() && file.name.split('.')[1] === 'html') {
             bundelHTML.push(fsProm.readFile(path.resolve(inputPathHTML, file.name)));
             Promise.all(bundelHTML).then(value => {
-               
-            fsProm.writeFile((path.resolve(outputPathHTML, 'template.html')), value);
+              
+              console.log( dataHTML)
+
+            // dataHTML = dataHTML.replace(`{{${file.name.split('.')[0]}}}`, value);
+              
+              
+              console.log(value)
+              // fsProm.writeFile(outputHTML);
+            fsProm.writeFile((path.resolve(outputPathHTML, 'index.html')), value);
           });
         }
       });

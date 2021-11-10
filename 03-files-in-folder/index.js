@@ -1,6 +1,7 @@
 const fs = require('fs');
 const fsProm = require('fs/promises');
 const path = require('path');
+const { basename, extname } = require('path/posix');
 
 const pathFolder = path.resolve(__dirname,'secret-folder');
 
@@ -12,7 +13,8 @@ fs.readdir(pathFolder, (error, files) => {
         fsProm.lstat(path.resolve(pathFolder, file))
           .then(stats => {
             if (stats.isFile()) {
-              console.log(`${file.split('.')[0]} - ${file.split('.')[1]} - ${stats.size / 1024}kb`);
+              console.log(`${basename(file, extname(file))} - ${extname(file).split('.').join('')} - ${stats.size / 1024}kb`);
+              // console.log(`${file.split('.')[0]} - ${file.split('.')[1]} - ${stats.size / 1024}kb`);
             }
           });
       });
