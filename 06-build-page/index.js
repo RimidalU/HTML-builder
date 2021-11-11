@@ -20,7 +20,10 @@ let outputHTML = path.resolve(__dirname, 'project-dist', 'index.html');
 
 fs.readdir(inputPath, (error, folders) => {
     if(error) {
-        console.log('Error', error.message)}
+      fsProm.rm(outputPath,{ recursive: true,  force: true }, (error) => {
+        if (error) {
+          console.log(error)}
+        console.log('Error', error.message)})}
     else {
         folders.forEach(folder => {            
             copyDirectory(folder)
